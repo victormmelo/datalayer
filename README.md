@@ -27,7 +27,7 @@ DataLayer\Datalayer::config(
     'localhost',
     'datalayer',
     'root',
-    'Contadores1@',
+    'pass',
     '3306'
 );
 ```
