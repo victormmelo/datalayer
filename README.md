@@ -2,6 +2,13 @@
 
 Gerenciador de requisições php em banco de dados mysql utilizando PDO
 
+## Instalação
+
+Para instalar esta dependência basta executar o comando abaixo:
+```shell
+composer require victormmeloc/datalayer
+```
+
 ## Iniciar
 
 Para usar essa classe, é nessário informar o nome da tabela, chamando a variável stática, conforme abaixo:
