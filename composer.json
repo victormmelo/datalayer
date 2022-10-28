@@ -1,0 +1,15 @@
+{
+    "name": "victormmeloc/datalayer",
+    "description": "Gerenciador de requisições php em banco de dados mysql utilizando PDO",
+    "authors": [
+        {
+            "name": "Victor Moreira de Melo",
+            "email": "victormmelo.c@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "DataLayer\\":"src/"
+        }
+    }
+}
