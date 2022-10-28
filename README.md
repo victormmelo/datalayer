@@ -21,6 +21,18 @@ DataLayer::$table = 'users';
 Para usar este gerenciador basta seguir o exemplo abaixo:
 
 #### pagination()
+```php
+//DEFINE AS CONFIGURAÇÕES DO BANCO DE DADOS
+DataLayer\Datalayer::config(
+    'localhost',
+    'datalayer',
+    'root',
+    'Contadores1@',
+    '3306'
+);
+```
+
+#### pagination()
 Método responsável por montar a query, fazer a consulta no banco de dados e retornar um array com os dados.  
 Para invoca-lo é possível informar a quantidade de dados que serão retornados e as colunas, caso seja default, será utilizado a quantidade de 50 retornos e todas as colunas.
 ```php
