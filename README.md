@@ -85,14 +85,25 @@ return $teste;
 
 #### Inserir dados no banco (INSERT)
 ```php
-use Victormmelo\DataLayer\DataLayer;
-DataLayer::$table = 'users';
+require __DIR__.'/vendor/autoload.php';
+
+use DataLayer\Datalayer;
+
+//DEFINE AS CONFIGURAÇÕES DO BANCO DE DADOS
+Datalayer::config(
+    'localhost',
+    'datalayer',
+    'root',
+    'Contadores1@',
+    '3306'
+);
+
 $request = [
-    'first_name' => 'Rafael',
-    'last_name' => 'Moraes Cruvinel',
-    'genre' => 'M'
+    'nome' => 'Kelfina',
+    'email' => 'Moreira de Melo',
 ];
-$teste = DataLayer::create($request);
+
+$teste = (new DataLayer('users'))->create($request);
 ```
 
 #### Atualizar dados no banco (UPDATE)
