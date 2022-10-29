@@ -13,17 +13,18 @@ composer require victormmeloc/datalayer
 
 Para usar essa classe, é nessário informar o nome da tabela, chamando a variável stática, conforme abaixo:
 ```php
-use Victormmelo\DataLayer\DataLayer;  
-DataLayer::$table = 'users';  
+require __DIR__.'/vendor/autoload.php';
+use DataLayer\Datalayer;
+DataLayer::setTable('users');  
 ```
 ## Utilização
 
 Para usar este gerenciador basta seguir o exemplo abaixo:
 
-#### pagination()
+#### configurar dados do banco
 ```php
 //DEFINE AS CONFIGURAÇÕES DO BANCO DE DADOS
-DataLayer\Datalayer::config(
+Datalayer::config(
     'localhost',
     'datalayer',
     'root',
@@ -36,10 +37,9 @@ DataLayer\Datalayer::config(
 Método responsável por montar a query, fazer a consulta no banco de dados e retornar um array com os dados.  
 Para invoca-lo é possível informar a quantidade de dados que serão retornados e as colunas, caso seja default, será utilizado a quantidade de 50 retornos e todas as colunas.
 ```php
-use Victormmelo\DataLayer\DataLayer;  
-DataLayer::$quantity = 5;  
-DataLayer::$columns = 'first_name,last_name';  
+Datalayer::pagination($page,$quantity,$filter,$columns);
 
+// RETORNO
 $arr = [
     'previus' => página anterior, caso não tenha retornará null,
     'next' => próxima página, caso não tenha retornará null,
@@ -51,83 +51,112 @@ $arr = [
     'data' => objeto com os dados,
 ];
 ```
-
-#### Consulta geral no banco (GET)
 ```php
-use Victormmelo\DataLayer\DataLayer;
-DataLayer::$table = 'users';
-DataLayer::$columns = 'first_name,last_name';
-$teste = DataLayer::get();
-$teste = DataLayer::run();
-return $teste;
-```
+// PARAMETROS
 
-#### Consulta com filtros (GET) (WHERE)
-```php
-use Victormmelo\DataLayer\DataLayer;
+/**
+ * PAGE
+ * a página que deseja fazer a pesquisa
+ * @param int $page
+ * valor default é '1'
+ */
+$page = 1;
+
+/**
+ * QUANTITY
+ * a quantidade de retornos por página
+ * @param int $quantity
+ * valor default é '50'
+ */
+$quantity = 50;
+
+/**
+ * FILTER
+ * os filtros da consulta. Esse filtro representa a cláusula WHERE da consultar
+ * @param array $filter
+ * valor default é '[]'
+ */
 $filter = [
-    'first_name' => [
+    'name' => [
         'operator' => '=',
         'value' => 'Victor'
     ],
-    'last_name' => [
+    'email' => [
         'operator' => 'LIKE',
         'value' => 'M%'
     ]
 ];
-DataLayer::$filter = $filter;
-DataLayer::$table = 'users';
-DataLayer::$columns = 'first_name,last_name';
-$teste = DataLayer::get();
-$teste = DataLayer::run();
-return $teste;
+
+/**
+ * COLUMNS (opcional)
+ * as colunas que deseja retornar
+ * @param string $columns
+ * valor default é '*'
+ */
+$columns = 'name,email';
 ```
 
-#### Inserir dados no banco (INSERT)
+#### GET
 ```php
-require __DIR__.'/vendor/autoload.php';
-
-use DataLayer\Datalayer;
-
-//DEFINE AS CONFIGURAÇÕES DO BANCO DE DADOS
-Datalayer::config(
-    'localhost',
-    'datalayer',
-    'root',
-    'Contadores1@',
-    '3306'
-);
-
-$request = [
-    'nome' => 'Kelfina',
-    'email' => 'Moreira de Melo',
+Datalayer::get(array $filter = [], string $columns = '*')
+$data = Datalayer::run();
+return $data;
+```
+```php
+// PARAMETROS
+/**
+ * FILTER
+ * os filtros da consulta. Esse filtro representa a cláusula WHERE da consultar
+ * @param array $filter
+ * valor default é '[]'
+ */
+$filter = [
+    'name' => [
+        'operator' => '=',
+        'value' => 'Victor'
+    ],
+    'email' => [
+        'operator' => 'LIKE',
+        'value' => 'M%'
+    ]
 ];
 
-$teste = (new DataLayer('users'))->create($request);
+/**
+ * COLUMNS (opcional)
+ * as colunas que deseja retornar
+ * @param string $columns
+ * valor default é '*'
+ */
+$columns = 'name,email';
 ```
 
-#### Atualizar dados no banco (UPDATE)
+#### CREATE
 ```php
-use Victormmelo\DataLayer\DataLayer;
-DataLayer::$table = 'users';
 $request = [
-    'first_name' => 'Rafael',
-    'last_name' => 'Moraes Cruvinel',
+    'nome' => 'Primeiro',
+    'email' => 'Segundo Sobrenome',
+];
+
+$id = Datalayer::create($request);
+```
+
+#### UPDATE
+```php
+$request = [
+    'first_name' => 'Raul',
+    'last_name' => 'da Silva Sauro',
     'genre' => 'M'
 ];
-$teste = DataLayer::update($request, $id);
+Datalayer::update($request, $id);
 ```
 
-#### Deletar dados no banco (DELETE)
+#### DELETE
 ```php
-use Victormmelo\DataLayer\DataLayer;
-DataLayer::$table = 'users';
-$teste = DataLayer::delete($id);
+Datalayer::delete($id);
 ```
 
-#### Ver colunas da tabela (DESCRIBE)
+#### DESCRIBE  
+Retornar as colunas da tabela
 ```php
-use Victormmelo\DataLayer\DataLayer;
-DataLayer::$table = 'users';
-$teste = DataLayer::describe();
+$columns = Datalayer::describe();
 ```

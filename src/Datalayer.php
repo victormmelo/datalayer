@@ -15,8 +15,7 @@ class Datalayer{
     private static string $table;
     private static string $sql;
 
-    public function __construct($table = 'users'){
-        self::$table = $table;
+    public function __construct(){
         $this->setConnection();
     }
 
@@ -26,6 +25,10 @@ class Datalayer{
         self::$user = $user;
         self::$pass = $pass;
         self::$port = $port;
+    }
+
+    public static function setTable($table){
+        self::$table = $table;
     }
 
     private function setConnection(){
@@ -43,9 +46,9 @@ class Datalayer{
         return $stmt;
     }
 
-    public static function pagination(int $page = 1, int $quantity = 50, int $start = 0){
+    public static function pagination(int $page = 1, int $quantity = 50, array $filter = [], string $columns = '*'){
         //MONTA A QUERY INICIAL
-        self::get();
+        self::get($filter,$columns);
 
         //CALCULA O TOTAL DE LINHAS SEM O LIMIT
         $quantityRows = self::$connection->query(self::$sql)->rowCount();
