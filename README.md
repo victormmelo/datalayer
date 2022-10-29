@@ -147,6 +147,7 @@ return $data;
  * o identificador do item a ser consultado
  * @param string $filter
  */
+$filter = 'email@gmail.com';
 
 /**
  * COLUMN (opcional)
