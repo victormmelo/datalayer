@@ -135,6 +135,28 @@ $filter = [
 $columns = 'name,email';
 ```
 
+#### FIND
+```php
+$data = Datalayer::find(string $filter,string $column = 'id');
+return $data;
+```
+```php
+// PARAMETROS
+/**
+ * FILTER (obrigatório)
+ * o identificador do item a ser consultado
+ * @param string $filter
+ */
+
+/**
+ * COLUMN (opcional)
+ * a coluna que deseja retornar
+ * @param string $column
+ * valor default é 'id'
+ */
+$column = 'email';
+```
+
 #### CREATE
 ```php
 $request = [

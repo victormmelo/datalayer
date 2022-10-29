@@ -90,13 +90,26 @@ class Datalayer{
         return $arr;
     }
 
+    /**
+     * Insere na query a parte do LIMIT
+     * @param int $quantity - a quantidade de linhas que serão retornadas
+     * @param int $start - a linha de início do limit
+     */
     public static function limit(int $quantity = 50, int $start = 0){
         self::$sql = self::$sql . " LIMIT " . $start . "," . $quantity;
         return;
     }
     
+    /**
+     * Monta a query
+     * @param array $filter - as informações das cláusulas WHERES que quer adicionar
+     * @param string $columns - as colunas que deseja retornar
+     */
     public static function get(array $filter = [], string $columns = '*'){
+        // INICIAR A QUERY
         $sql = "SELECT $columns FROM " .self::$table;
+        
+        // VERIFICA SE TEM FILTRO PARA INSERIR NA QUERY
         if($filter){
             $sql .= " WHERE ";
             foreach ($filter as $key => $value) {
@@ -108,48 +121,124 @@ class Datalayer{
                 }
                 
             }
+
+            // REMOVE DO FIM DA QUERY A STRING ' AND '
             $sql = rtrim($sql, ' AND ');
         }
+
+        // ATUALZIA A VARIAVEL
         self::$sql = $sql;
         return;
     }
 
-    public static function getId($id){
-        $sql = self::$connection->query("SELECT * FROM ".self::$table." WHERE id=$id");
-        $stmt = $sql->fetch();
-        return $stmt;
+    /**
+     * Busca o primeiro registro no banco de dados de acordo com a coluna e o valor requerido
+     * @param string $filter
+     * @param string $column
+     * @return array Dados do banco
+     */
+    public static function find(string $filter,string $column = 'id'){
+        //VERIFICA SE O FILTER FOI INFORMADO, POIS ELE É OBRIGATÓRIO
+        if(!$filter){ return; }
+
+        //VERIFICA SE O FILTER É UM NUMERO, CASO CONTRÁRIO A QUERY TERA ASPAS SIMPLES ENVOLVENDO A VARIAVEL
+        if(gettype($filter) == 'integer' or gettype($filter) == 'double'){
+            $sql = self::$connection->query("SELECT * FROM ".self::$table." WHERE $column=$filter");
+        } else {
+            $sql = self::$connection->query("SELECT * FROM ".self::$table." WHERE $column='$filter'");
+        }
+        return $sql->fetch();
     }
 
-    public static function create($data){
+    /**
+     * Insere um dado no banco
+     * @param array $request - um array com as chaves e valores a serem inseridos no banco
+     * @return int $id
+     */
+    public static function create($request){
+        // INICIA AS VARIAVEIS
         $keys = '';
         $values = '';
-        foreach ($data as $key => $value) {
+
+        // PREENCHE AS VARIVEIS DE CHAVE E VALOR
+        foreach ($request as $key => $value) {
             $keys .= $key . ',';
             $values .= '"' . $value . '",';
         }
+
+        // REMOVE AS STRINGS DO FIM DAS VARIAVEIS
         $keys = rtrim($keys, ',');
         $values = rtrim($values, ',');
         
+        // MONTA A QUERY
         $sql = "INSERT INTO ".self::$table." ($keys) VALUES ($values)";
+        
+        // EXECUTA A QUERY
         self::$connection->exec($sql);
+
+        //RETORNA O ULTIMO A ID INSERIDO
         return self::$connection->lastInsertId();
     }
 
-    public static function update($data, $id){
+    /**
+     * Atualiza um dado no banco
+     * @param array $request - um array com as chaves e valores a serem inseridos no banco
+     * @param int $id
+     * @return int $id
+     */
+    public static function update($request, $id){
+        // INICIA A VARIAVEL
+        $resposta = [];
+
+        // CONSULTA O ID NO BANCO
+        $verificaId = self::find($id);
+
+        // VERIFICA SE O ID EXISTE NO BANCO
+        if(!$verificaId){
+            $resposta = [
+                'status' => 404,
+                'mensagem' => 'Não foi possível encontrar esse id no banco de dados'
+            ];
+
+            throw new \Exception(json_encode($resposta, JSON_UNESCAPED_UNICODE), 404);
+            return;
+        }
+
+        // INICIA A VARIAVEL
         $dataUpdated = '';
-        foreach ($data as $key => $value) {
+
+        // PREENCHE A VARIAVEL DE ACORDO COM O REQUEST
+        foreach ($request as $key => $value) {
             $dataUpdated .= $key . '="' . $value . '",';
         }
+
+        // REMOVE DO FIM DA STRING A VIRGULA
         $dataUpdated = rtrim($dataUpdated, ',');
-        
+
+        // MONTA A QUERY
         $sql = "UPDATE ".self::$table." SET $dataUpdated WHERE id=$id";
+
+        // EXECUTA A QUERY
         self::$connection->exec($sql);
-        return $id;
+
+        // MONTA O ARRAY COM A RESPOSTA DE SUCESSO
+        $resposta = [
+            'status' => 200,
+            'mensagem' => 'O item foi atualizado com sucesso'
+        ];
+
+        // RETORNA A RESPOSTA
+        return $resposta;
     }
 
     public static function delete($id){
+        // INICIA A VARIAVEL
         $resposta = [];
-        $verificaId = self::getId($id);
+
+        // CONSULTA O ID NO BANCO
+        $verificaId = self::find($id);
+
+        // VERIFICA SE O ID EXISTE NO BANCO
         if(!$verificaId){
             $resposta = [
                 'status' => 404,
@@ -160,20 +249,27 @@ class Datalayer{
             return;
         }
         
+        // MONTA A QUERY
         $sql = "DELETE FROM ".self::$table." WHERE id=$id";
+        
+        // EXECUTA A QUERY
         self::$connection->exec($sql);
+
+        // MONTA O ARRAY COM A RESPOSTA DE SUCESSO
         $resposta = [
             'status' => 200,
             'mensagem' => 'O item foi excluído com sucesso'
         ];
-        return json_encode($resposta, JSON_UNESCAPED_UNICODE);
+
+        // RETORNA A RESPOSTA
+        return $resposta;
     }
 
     public static function describe(){
-        $table = self::$table;
-        $connection = self::$connection;
-        $sql = $connection->query("DESCRIBE $table");
-        $stmt = $sql->fetchAll();
-        return $stmt;
+        // FAZ A CONSULTA NO BANCO DE DADOS
+        $sql = self::$connection->query("DESCRIBE ".self::$table);
+        
+        // RETORNA A CONSULTA
+        return $sql->fetchAll();
     }
 }
