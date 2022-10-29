@@ -1,4 +1,4 @@
-# PHP PDO - DataLayer
+# PHP PDO - Datalayer
 
 Gerenciador de requisições php em banco de dados mysql utilizando PDO
 
@@ -15,7 +15,7 @@ Para usar essa classe, é nessário informar o nome da tabela, chamando a variá
 ```php
 require __DIR__.'/vendor/autoload.php';
 use DataLayer\Datalayer;
-DataLayer::setTable('users');  
+Datalayer::setTable('users');  
 ```
 ## Utilização
 
