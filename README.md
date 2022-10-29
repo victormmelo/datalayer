@@ -35,6 +35,7 @@ Datalayer::config(
     'pass',
     '3306'
 );
+new Datalayer;
 ```
 
 #### pagination()
@@ -102,7 +103,7 @@ $columns = 'name,email';
 
 #### GET
 ```php
-Datalayer::get(array $filter = [], string $columns = '*')
+Datalayer::get(array $filter = [], string $columns = '*');
 $data = Datalayer::run();
 return $data;
 ```
