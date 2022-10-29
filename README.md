@@ -13,8 +13,12 @@ composer require victormmeloc/datalayer
 
 Para usar essa classe, é nessário informar o nome da tabela, chamando a variável stática, conforme abaixo:
 ```php
+// INSERE O AUTOLOAD
 require __DIR__.'/vendor/autoload.php';
+
 use DataLayer\Datalayer;
+
+// DEFINE A TABELA
 Datalayer::setTable('users');  
 ```
 ## Utilização
