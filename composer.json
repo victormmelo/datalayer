@@ -1,6 +1,8 @@
 {
     "name": "victormmeloc/datalayer",
     "description": "Gerenciador de requisições php em banco de dados mysql utilizando PDO",
+    "type": "library",
+    "license": "MIT",
     "authors": [
         {
             "name": "Victor Moreira de Melo",
